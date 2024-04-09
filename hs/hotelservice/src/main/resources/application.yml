@@ -1,0 +1,15 @@
+server:
+ port: 8082
+
+spring:
+ datasource:
+    url: jdbc:postgresql://localhost:5432/microservices
+    username: postgres
+    password: Omkar@2003
+ jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+ thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html

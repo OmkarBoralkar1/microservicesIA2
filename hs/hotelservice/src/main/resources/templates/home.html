@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+    <title>Hotel List</title>
+</head>
+<body>
+    <h1>Hotel List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Hotel ID</th>
+                <th>Hotel Image</th>
+                <th>Name</th>
+                <th>Location</th>
+                <th>About</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Iterate over the list of hotels -->
+            <tr th:each="hotel : ${hotels}">
+                <td th:text="${hotel.hotelname}"></td>
+                <td th:text="${hotel.hotellocation}"></td>
+                <td th:text="${hotel.about}"></td>
+                <td>
+                    <a th:href="@{/update/{hotelid}(hotelid=${hotel.hotelid})}">Update</a>
+                    <a th:href="@{/delete/{hotelid}(hotelid=${hotel.hotelid})}">Delete</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="/create">Add New Hotel</a>
+</body>
+</html>

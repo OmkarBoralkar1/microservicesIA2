@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+    <title>Delete Hotel</title>
+</head>
+<body>
+    <h1>Delete Hotel</h1>
+    <p>Are you sure you want to delete the following hotel?</p>
+    <p>Hotel ID: <span th:text="${hotel.hotelid}"></span></p>
+    <p>Hotel Image: <span th:text="${hotel.hotelimg}"></span></p>
+    <p>Name: <span th:text="${hotel.hotelname}"></span></p>
+    <p>Location: <span th:text="${hotel.hotellocation}"></span></p>
+    <p>About: <span th:text="${hotel.about}"></span></p>
+    <form th:action="@{/delete/{hotelid}(hotelid=${hotel.hotelid})}" method="post">
+        <input type="hidden" name="hotelid" th:value="${hotel.hotelid}" />
+        <input type="submit" value="Yes, Delete">
+    </form>
+    <a href="/">Cancel</a>
+</body>
+</html>
