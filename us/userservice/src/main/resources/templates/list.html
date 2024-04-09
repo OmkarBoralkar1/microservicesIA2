@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User List</title>
+    <style>
+        /* Optional: Add some basic styling to make the link look like a button */
+        .create-user-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        .create-user-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>User List</h1>
+
+    <!-- Button to redirect to the create user form -->
+    <a href="/create" class="create-user-btn">Create New User</a>
+
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>About</th>
+            <th>Actions</th>
+        </tr>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.about}"></td>
+            <td>
+                <a th:href="@{/update/{userId}(userId=${user.userId})}">Update</a>
+                <a th:href="@{/delete/{userId}(userId=${user.userId})}">Delete</a>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
