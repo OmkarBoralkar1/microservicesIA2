@@ -9,8 +9,9 @@
     <table>
         <thead>
             <tr>
-                <th>Hotel ID</th>
-                <th>Hotel Image</th>
+                
+                <th>Hotel Video</th>
+                <th>Hotel date</th>
                 <th>Name</th>
                 <th>Location</th>
                 <th>About</th>
@@ -20,6 +21,14 @@
         <tbody>
             <!-- Iterate over the list of hotels -->
             <tr th:each="hotel : ${hotels}">
+                <td>
+                    <video width="320" height="240" controls>
+                        <source th:src="@{/videos/{filename}(filename=${hotel.hotelVideoPath})}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    
+                </td>
+                <td th:text="${hotel.hoteldate}"></td>
                 <td th:text="${hotel.hotelname}"></td>
                 <td th:text="${hotel.hotellocation}"></td>
                 <td th:text="${hotel.about}"></td>

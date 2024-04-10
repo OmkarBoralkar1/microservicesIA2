@@ -13,7 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+// import org.springframework.web.multipart.MultipartFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.IOException;
 // import org.springframework.core.io.UrlResource;
 // import org.springframework.core.io.Resource;
 // import org.springframework.http.ResponseEntity;
@@ -55,6 +62,16 @@ public class hotelcontroller {
         hotelservice.delete(hotelid);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+    public void saveHotelVideo(String hotelId, MultipartFile file) throws IOException {
+        Path path = Paths.get("uploads/" + hotelId + "/" + file.getOriginalFilename());
+        Files.copy(file.getInputStream(), path);
+        // Update the hotel entity with the new video path
+    }
+
+    public Path loadHotelVideo(String hotelId) {
+        return Paths.get("uploads/" + hotelId + "/" + hotelId + ".mp4"); // Assuming the video file is named after the hotel ID
+    }
+}
 
     // @GetMapping("/{hotelid}/image")
     // public ResponseEntity<Resource> getHotelImage(@PathVariable String hotelid) {
@@ -78,4 +95,4 @@ public class hotelcontroller {
     // }
 
     // Other methods...
-}
+    

@@ -8,7 +8,10 @@
     <h1>Delete Hotel</h1>
     <p>Are you sure you want to delete the following hotel?</p>
     <p>Hotel ID: <span th:text="${hotel.hotelid}"></span></p>
-    <p>Hotel Image: <span th:text="${hotel.hotelimg}"></span></p>
+    <p>Hotel Image: <video width="320" height="240" controls>
+        <source th:src="@{/videos/{filename}(filename=${hotel.hotelVideoPath})}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video></p>
     <p>Name: <span th:text="${hotel.hotelname}"></span></p>
     <p>Location: <span th:text="${hotel.hotellocation}"></span></p>
     <p>About: <span th:text="${hotel.about}"></span></p>

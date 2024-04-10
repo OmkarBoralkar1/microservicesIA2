@@ -6,14 +6,19 @@
 </head>
 <body>
     <h1>Update Hotel</h1>
-    <form action="/update" method="post">
+    <form th:action="@{/update/{hotelid}(hotelid=${hotel.hotelid})}" method="post">
         <input type="hidden" name="hotelid" th:value="${hotel.hotelid}" />
         <label for="hotelimg">Hotel Image:</label>
-        <input type="text" id="hotelimg" name="hotelimg" th:value="${hotel.hotelimg}" required><br>
+        <video width="320" height="240" controls>
+            <source th:src="@{/videos/{filename}(filename=${hotel.hotelVideoPath})}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <label for="name">Date:</label>
+        <input type="date" id="hoteldate" name="hoteldate" th:value="${hotel.hoteldate}" required><br>
         <label for="name">Name:</label>
-        <input type="text" id="name" name="name" th:value="${hotel.hotelname}" required><br>
+        <input type="text" id="hotelname" name="hotelname" th:value="${hotel.hotelname}" required><br>
         <label for="location">Location:</label>
-        <input type="text" id="location" name="location" th:value="${hotel.hotellocation}" required><br>
+        <input type="text" id="hotellocation" name="hotellocation" th:value="${hotel.hotellocation}" required><br>
         <label for="about">About:</label>
         <input type="text" id="about" name="about" th:value="${hotel.about}" required><br>
         <input type="submit" value="Update">
