@@ -98,11 +98,12 @@ public class HotelserviceApplication {
 			// Save the hotel entity
 			hotelService.create(hotel);
 
-			// Redirect to the home page or any other appropriate page after successful
-			// creation
+			//Redirect to the home page or any other appropriate page after successful
+			//creation
 			return "redirect:/";
-		} catch (IOException e) {
-			// Handle file storage exception
+		} 
+		catch (IOException e) {
+			//Handle file storage exception
 			throw new FileStorageException(
 					"Could not store file for hotel " + hotel.getHotelid() + ". Please try again!", e);
 		}
@@ -133,7 +134,8 @@ public class HotelserviceApplication {
 	}
 
 	@PostMapping("/delete/{hotelid}")
-	public String deleteHotel(@PathVariable String hotelid) {
+	public String deleteHotel(@PathVariable String hotelid) 
+	{
 		System.out.println("delete post router hit");
 		hotelService.delete(hotelid);
 		return "redirect:/";

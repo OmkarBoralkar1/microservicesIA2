@@ -1,0 +1,18 @@
+server:
+  port:  8083
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: micreservices
+  application:
+    name: Hotel_service
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8084/eureka}     

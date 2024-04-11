@@ -14,10 +14,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+// import org.springframework.cloud.netflix.eureka.client.EnableEurekaClient;
+
 
 @SpringBootApplication
 @Controller
 @RequestMapping("/")
+// @EnableEurekaClient;
+// @EnableEurekaClient
 public class UserserviceApplication {
 
     @Autowired
@@ -78,13 +82,11 @@ public class UserserviceApplication {
 
     // Method to delete a user
     @GetMapping("/delete/{userId}")
-    public String showDeleteConfirmation(@PathVariable("userId") String userId, Model model) {
-        User user = userService.getUser(userId);
-        model.addAttribute("user", user);
-        return "delete"; // This should match the name of your HTML template file without the .html
-                         // extension
+    public String Showdelete(@PathVariable("userId") String userId) {
+        System.out.println("deletepost  hit");
+        userService.deleteUser(userId);
+        return "delete";
     }
-
     @PostMapping("/delete/{userId}")
     public String deleteUser(@PathVariable("userId") String userId) {
         System.out.println("deletepost  hit");

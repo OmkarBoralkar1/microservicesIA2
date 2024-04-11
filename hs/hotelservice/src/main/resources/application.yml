@@ -17,3 +17,13 @@ spring:
     multipart:
       max-file-size: 500MB
       max-request-size: 500MB
+ application:
+    name: Hotel_service
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8084/eureka}
