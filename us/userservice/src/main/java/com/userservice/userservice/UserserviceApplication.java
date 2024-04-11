@@ -1,31 +1,49 @@
 package com.userservice.userservice;
 
 import com.userservice.userservice.services.*;
+
+import jakarta.servlet.http.HttpSession;
+
+// import com.userservice.userservice.services.externalservice.useerHotelservice;
 import com.userservice.userservice.entities.User;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.net.URI;
 import java.util.*;
 // import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 // import org.springframework.cloud.netflix.eureka.client.EnableEurekaClient;
-
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.http.ResponseEntity;
 
 @SpringBootApplication
 @Controller
 @RequestMapping("/")
+@EnableFeignClients
+@EnableDiscoveryClient
 // @EnableEurekaClient;
 // @EnableEurekaClient
 public class UserserviceApplication {
 
     @Autowired
     private Userservice userService;
+    // @Autowired
+    // private useerHotelservice hotelService;
+    @Autowired
+    private DiscoveryClient discoveryClient;
 
     public static void main(String[] args) {
         SpringApplication.run(UserserviceApplication.class, args);
@@ -87,10 +105,49 @@ public class UserserviceApplication {
         userService.deleteUser(userId);
         return "delete";
     }
+
     @PostMapping("/delete/{userId}")
     public String deleteUser(@PathVariable("userId") String userId) {
         System.out.println("deletepost  hit");
         userService.deleteUser(userId);
         return "redirect:/list";
     }
+
+    @GetMapping("/login")
+    public String showLoginForm(Model model) {
+        model.addAttribute("user", new User());
+        return "login"; // This should match the name of your HTML template file without the .html
+                        // extension
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> processLoginForm(@ModelAttribute User user) {
+        User foundUser = userService.findByEmail(user.getEmail());
+        if (foundUser != null && foundUser.getPassword().equals(user.getPassword())) {
+            // Set userId and username in the session
+            // session.setAttribute("userId", foundUser.getUserId());
+            // session.setAttribute("username", foundUser.getUsername());
+
+            // // Print session values
+            // System.out.println("userId stored in session: " + session.getAttribute("userId"));
+            // System.out.println("username stored in session: " + session.getAttribute("username"));
+
+            String hotelServiceUrl = fetchHotelServiceUrl();
+            String redirectUrl = hotelServiceUrl + "/home?userId=" + foundUser.getUserId() + "&username="
+                    + foundUser.getUsername();
+            return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(redirectUrl)).build();
+        } else {
+            return ResponseEntity.ok("Invalid email or password.");
+        }
+    }
+
+    private String fetchHotelServiceUrl() {
+        List<ServiceInstance> instances = discoveryClient.getInstances("HOTELSERVICE");
+        if (!instances.isEmpty()) {
+            ServiceInstance instance = instances.get(0);
+            return instance.getUri().toString();
+        }
+        throw new RuntimeException("HotelserviceApplication not found");
+    }
+
 }

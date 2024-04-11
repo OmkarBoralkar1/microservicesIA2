@@ -6,6 +6,5 @@ import com.userservice.userservice.entities.User; // Make sure to import the Use
 public interface UserRepository extends JpaRepository<User, String> {
 //In this we implement any custom or query
 //write
-
-
+        User findByEmail(String email);
 }

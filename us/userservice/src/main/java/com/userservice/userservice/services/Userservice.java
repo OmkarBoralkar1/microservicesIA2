@@ -21,4 +21,6 @@ public interface Userservice {
 
     // Update
     User UpdateUser(String userId, User user);
+
+    User findByEmail(String email);
 }

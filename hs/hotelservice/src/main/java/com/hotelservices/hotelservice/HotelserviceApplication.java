@@ -21,10 +21,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 // import org.springframework.web.multipart.MultipartFile;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import javax.servlet.http.HttpSession;
 // import java.net.MalformedURLException;
 import java.nio.file.Files;
 // 
@@ -36,11 +42,16 @@ import java.util.*;
 // import com.hotelservices.hotelservice.filestorage.FileStorageException;
 @SpringBootApplication
 @Controller
+@EnableFeignClients
 @RequestMapping("/")
+@SessionAttributes({ "userId", "username" })
 public class HotelserviceApplication {
 
 	@Autowired
 	private Hotelservice hotelService;
+
+	@Autowired
+	private DiscoveryClient discoveryClient;
 
 	public static void main(String[] args) {
 		SpringApplication.run(HotelserviceApplication.class, args);
@@ -49,9 +60,51 @@ public class HotelserviceApplication {
 	@GetMapping("/")
 	public String getAllHotels(Model model) {
 		System.out.println("hotel  post  router hit");
+		String userId = (String) model.getAttribute("userId");
+		String username = (String) model.getAttribute("username");
+		System.out.println("the username and the  to go to the home page is" + username + "Id is" + userId);
+		model.addAttribute("username", username);
 		List<Hotel> hotels = hotelService.getAll();
 		model.addAttribute("hotels", hotels);
+		List<ServiceInstance> instances = discoveryClient.getInstances("USERSERVICE");
+		if (!instances.isEmpty()) {
+			ServiceInstance instance = instances.get(0);
+			String userserviceUrl = instance.getUri().toString();
+			String userserviceUrlWithLogin = userserviceUrl + "/login";
+			System.out.println("the url got is" + userserviceUrlWithLogin);
+			model.addAttribute("userserviceUrl", userserviceUrlWithLogin);
+
+		}
 		return "home";
+	}
+
+	@GetMapping("/home")
+	public String showHomePage(@RequestParam("userId") String userId, @RequestParam("username") String username,
+			Model model) {
+		// Retrieve userId and username from the session
+		// String sessionUserId = (String) session.getAttribute("userId");
+		// String sessionUsername = (String) session.getAttribute("username");
+
+		// System.out.println("userId from session: " + sessionUserId);
+		// System.out.println("username from session: " + sessionUsername);
+		// Store userId and username in the session
+		model.addAttribute("userId", userId);
+		model.addAttribute("username", username);
+		List<Hotel> hotels = hotelService.getAll();
+		model.addAttribute("hotels", hotels);
+
+		// Fetch userservice URL from Eureka
+		List<ServiceInstance> instances = discoveryClient.getInstances("USERSERVICE");
+		if (!instances.isEmpty()) {
+			ServiceInstance instance = instances.get(0);
+			String userserviceUrl = instance.getUri().toString();
+			String userserviceUrlWithLogin = userserviceUrl + "/login";
+			System.out.println("the url got is" + userserviceUrlWithLogin);
+			model.addAttribute("userserviceUrl", userserviceUrlWithLogin);
+		}
+
+		return "home"; // This should match the name of your HTML template file without the .html
+						// extension
 	}
 
 	@GetMapping("/videos/{filename:.+}")
@@ -79,8 +132,12 @@ public class HotelserviceApplication {
 	@GetMapping("/create")
 	public String showCreateForm(Model model) {
 		System.out.println("create get router hit");
+		String userId = (String) model.getAttribute("userId");
+		String username = (String) model.getAttribute("username");
+		System.out.println("the username and the  to go to the home page is" + username + "Id is" + userId);
+		model.addAttribute("userId", userId);
 		model.addAttribute("hotel", new Hotel());
-		return "create";
+		return "createhotel";
 	}
 
 	// HotelserviceApplication.java
@@ -98,12 +155,11 @@ public class HotelserviceApplication {
 			// Save the hotel entity
 			hotelService.create(hotel);
 
-			//Redirect to the home page or any other appropriate page after successful
-			//creation
+			// Redirect to the home page or any other appropriate page after successful
+			// creation
 			return "redirect:/";
-		} 
-		catch (IOException e) {
-			//Handle file storage exception
+		} catch (IOException e) {
+			// Handle file storage exception
 			throw new FileStorageException(
 					"Could not store file for hotel " + hotel.getHotelid() + ". Please try again!", e);
 		}
@@ -134,8 +190,7 @@ public class HotelserviceApplication {
 	}
 
 	@PostMapping("/delete/{hotelid}")
-	public String deleteHotel(@PathVariable String hotelid) 
-	{
+	public String deleteHotel(@PathVariable String hotelid) {
 		System.out.println("delete post router hit");
 		hotelService.delete(hotelid);
 		return "redirect:/";
