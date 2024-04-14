@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ratings for Hotel</title>
+</head>
+<body>
+    <h1>Ratings for Hotel</h1>
+    <p>Welcome, <span th:text="${userId}"></span>!</p>
+    <p>Welcome, <span th:text="${username}"></span> Rate this video !</p>
+    <p>Hotelid, <span th:text="${hotelid}"></span>!</p>
+    <table>
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Score</th>
+                <th>feedback</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="rating : ${ratings}">
+                <td th:text="${rating.userId}"></td>
+                <td th:text="${rating.rating}"></td>
+                <td th:text="${rating.feedback}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -92,10 +92,30 @@ public class UserserviceApplication {
 
     // Method to handle the update of a user
     @PostMapping("/update/{userId}")
-    public String updateUser(@PathVariable("userId") String userId, @ModelAttribute User user) {
-        System.out.println("updatepost  hit");
-        userService.UpdateUser(userId, user); // Assuming saveUser handles updates as well
-        return "redirect:/list";
+    public ResponseEntity<String> updateUser(@PathVariable("userId") String userId, @ModelAttribute User user) {
+        System.out.println("updatepost hit");
+        try {
+            userService.UpdateUser(userId, user); // Attempt to update the user
+            String hotelServiceUrl = fetchHotelServiceUrlupdate();
+
+            // Construct the redirect URL with userId and username as query parameters
+            String redirectUrl = hotelServiceUrl + "/home?userId=" + userId + "&username=" + user.getUsername();
+
+            // If the update was successful, redirect to the hotel service
+            return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(redirectUrl)).build();
+        } catch (Exception e) {
+            // If an exception is thrown, it means the update failed
+            return ResponseEntity.ok("Update failed: " + e.getMessage());
+        }
+    }
+
+    private String fetchHotelServiceUrlupdate() {
+        List<ServiceInstance> instances = discoveryClient.getInstances("HOTELSERVICE");
+        if (!instances.isEmpty()) {
+            ServiceInstance instance = instances.get(0);
+            return instance.getUri().toString();
+        }
+        throw new RuntimeException("HotelserviceApplication not found");
     }
 
     // Method to delete a user
@@ -129,8 +149,10 @@ public class UserserviceApplication {
             // session.setAttribute("username", foundUser.getUsername());
 
             // // Print session values
-            // System.out.println("userId stored in session: " + session.getAttribute("userId"));
-            // System.out.println("username stored in session: " + session.getAttribute("username"));
+            // System.out.println("userId stored in session: " +
+            // session.getAttribute("userId"));
+            // System.out.println("username stored in session: " +
+            // session.getAttribute("username"));
 
             String hotelServiceUrl = fetchHotelServiceUrl();
             String redirectUrl = hotelServiceUrl + "/home?userId=" + foundUser.getUserId() + "&username="
@@ -149,5 +171,4 @@ public class UserserviceApplication {
         }
         throw new RuntimeException("HotelserviceApplication not found");
     }
-
 }

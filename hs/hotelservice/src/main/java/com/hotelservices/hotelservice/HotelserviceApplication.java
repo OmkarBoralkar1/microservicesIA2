@@ -4,6 +4,9 @@ import com.hotelservices.hotelservice.entities.Hotel;
 import com.hotelservices.hotelservice.filestorage.FileStorageException;
 import com.hotelservices.hotelservice.services.Hotelservice;
 
+import jakarta.ws.rs.GET;
+import reactor.core.publisher.Mono;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,17 +30,31 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
+
 import javax.servlet.http.HttpSession;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 // import java.net.MalformedURLException;
 import java.nio.file.Files;
-// 
+import org.springframework.http.MediaType;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 // import com.hotelservices.hotelservice.FileStorageException;
+import java.util.stream.Collectors;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+import org.springframework.http.HttpStatus;
+
+import org.springframework.web.servlet.view.RedirectView;
 
 // import com.hotelservices.hotelservice.filestorage.FileStorageException;
 @SpringBootApplication
@@ -52,6 +69,9 @@ public class HotelserviceApplication {
 
 	@Autowired
 	private DiscoveryClient discoveryClient;
+
+	@Autowired
+	private WebClient.Builder webClientBuilder;
 
 	public static void main(String[] args) {
 		SpringApplication.run(HotelserviceApplication.class, args);
@@ -73,6 +93,9 @@ public class HotelserviceApplication {
 			String userserviceUrlWithLogin = userserviceUrl + "/login";
 			System.out.println("the url got is" + userserviceUrlWithLogin);
 			model.addAttribute("userserviceUrl", userserviceUrlWithLogin);
+			String userserviceUrlWithprofile = String.format("%s/update/%s", userserviceUrl, userId);
+			System.out.println("the url got is" + userserviceUrlWithprofile);
+			model.addAttribute("userserviceprofileurl", userserviceUrlWithprofile);
 
 		}
 		return "home";
@@ -101,6 +124,9 @@ public class HotelserviceApplication {
 			String userserviceUrlWithLogin = userserviceUrl + "/login";
 			System.out.println("the url got is" + userserviceUrlWithLogin);
 			model.addAttribute("userserviceUrl", userserviceUrlWithLogin);
+			String userserviceUrlWithprofile = String.format("%s/update/%s", userserviceUrl, userId);
+			System.out.println("the url got is" + userserviceUrlWithprofile);
+			model.addAttribute("userserviceprofileurl", userserviceUrlWithprofile);
 		}
 
 		return "home"; // This should match the name of your HTML template file without the .html
@@ -195,4 +221,59 @@ public class HotelserviceApplication {
 		hotelService.delete(hotelid);
 		return "redirect:/";
 	}
+
+	@GetMapping("/myvideos")
+	public String getUserHotels(Model model) {
+		System.out.println("hotel post router hit");
+		String userId = (String) model.getAttribute("userId");
+		String username = (String) model.getAttribute("username");
+		System.out.println("the username and the to go to the home page is" + username + "Id is" + userId);
+		model.addAttribute("username", username);
+
+		// Assuming hotelService.getAll() returns a List<Hotel>
+		// Modify this method to include a filter that only returns hotels associated
+		// with the current user
+		List<Hotel> hotels = hotelService.getAll().stream()
+				.filter(hotel -> hotel.getUserid().equals(userId))
+				.collect(Collectors.toList());
+
+		model.addAttribute("hotels", hotels);
+
+		List<ServiceInstance> instances = discoveryClient.getInstances("USERSERVICE");
+		if (!instances.isEmpty()) {
+			ServiceInstance instance = instances.get(0);
+			String userserviceUrl = instance.getUri().toString();
+			String userserviceUrlWithLogin = userserviceUrl + "/login";
+			System.out.println("the url got is" + userserviceUrlWithLogin);
+			model.addAttribute("userserviceUrl", userserviceUrlWithLogin);
+			String userserviceUrlWithprofile = String.format("%s/update/%s", userserviceUrl, userId);
+			System.out.println("the url got is" + userserviceUrlWithprofile);
+			model.addAttribute("userserviceprofileurl", userserviceUrlWithprofile);
+		}
+		return "myvideos";
+	}
+
+	@GetMapping("/rate/{hotelid}")
+    public ResponseEntity<RedirectView> rateHotel(@PathVariable String hotelid, Model model) {
+        String userId = (String) model.getAttribute("userId");
+        String username = (String) model.getAttribute("username");
+
+        // Find the RatingService instance from Eureka
+        List<ServiceInstance> instances = discoveryClient.getInstances("RATINGSERVICE");
+        if (!instances.isEmpty()) {
+            ServiceInstance instance = instances.get(0);
+            String ratingservice = instance.getUri().toString();
+            String ratingServiceUrl = ratingservice + "/rate?userId=" + userId + "&hotelId=" + hotelid + "&username=" + username;
+
+            // Create a RedirectView instance
+            RedirectView redirectView = new RedirectView(ratingServiceUrl);
+            redirectView.setStatusCode(HttpStatus.FOUND); // Use HttpStatus.FOUND for a temporary redirect
+
+            // Return the RedirectView wrapped in a ResponseEntity
+			return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(ratingServiceUrl)).build();
+        } else {
+            // Handle the case where the RatingService is not found
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }

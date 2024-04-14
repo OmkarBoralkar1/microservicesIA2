@@ -2,14 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <html>
 <head>
-    <title>Hotel List</title>
+    <title>my videos</title>
 </head>
 <body>
-    <p>Welcome, <span th:text="${username}"></span>!</p>
-    <a th:href="${userserviceUrl}">Login</a>
-    <a th:href="${userserviceprofileurl}">profile</a>
-    <a href="/myvideos">MY Videos</a>
-    <h1>Hotel List</h1>
+   
+    <h1>Video List</h1>
     <table>
         <thead>
             <tr>
@@ -19,7 +16,7 @@
                 <th>Name</th>
                 <th>Location</th>
                 <th>About</th>
-               
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -37,13 +34,13 @@
                 <td th:text="${hotel.hotellocation}"></td>
                 <td th:text="${hotel.about}"></td>
                 <td>
-                    <a th:href="@{/rate/{hotelid}(hotelid=${hotel.hotelid})}">Rate</a>
-                    
+                    <a th:href="@{/update/{hotelid}(hotelid=${hotel.hotelid})}">Update</a>
+                    <a th:href="@{/delete/{hotelid}(hotelid=${hotel.hotelid})}">Delete</a>
                 </td>
-                
             </tr>
         </tbody>
     </table>
-    <a href="/create">Add New Hotel</a>
+    <a href="/create">Add New Video</a>
+    <a href="/">Back to home</a>
 </body>
 </html>

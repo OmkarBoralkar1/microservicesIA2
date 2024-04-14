@@ -8,6 +8,9 @@ spring:
       database: micreservices
   application:
     name: Hotel_service
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
 eureka:
   instance:
     prefer-ip-address: true
