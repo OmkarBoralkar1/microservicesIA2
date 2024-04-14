@@ -277,4 +277,14 @@ public class HotelserviceApplication {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+	@GetMapping("/search")
+    public String searchHotels(@RequestParam("query") String query, Model model) {
+        System.out.println("search router hit");
+        List<Hotel> hotels = hotelService.searchHotels(query); // Use correct service method
+        System.out.println("search results got: " + hotels);
+        model.addAttribute("hotels", hotels);
+        return "home"; // This should match the name of your HTML template file without the .html extension
+    }
+
 }

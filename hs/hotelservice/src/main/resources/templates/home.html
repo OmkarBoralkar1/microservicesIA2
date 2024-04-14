@@ -27,6 +27,14 @@
 
     <div class="container mt-4">
         <h1>Welcome, <span th:text="${username}"></span>!</h1>
+        <form action="/search" method="get" class="mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control" name="query" placeholder="Search videos...">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
         <div class="row">
             <div th:each="hotel : ${hotels}" class="col-md-3">
                 <div class="card mb-4">
@@ -39,25 +47,20 @@
                         <!-- Resolution selector -->
                         <div>
                             <label for="resolution" th:attr="for='resolution_' + ${hotel.hotelid}">Select Resolution:</label>
-                            <select th:id="'resolution_' + ${hotel.hotelid}">
+                            <select th:id="'resolution_' + ${hotel.hotelid}" onchange="changeResolution(event)">
                                 <option value="360">360p</option>
                                 <option value="720">720p</option>
                                 <option value="1080">1080p</option>
                                 <!-- Add more options as needed -->
                             </select>
-                            <button data-hotel-id="${hotel.hotelid}" class="changeResolution">Apply</button>
                         </div>
                         
                         <!-- Forward and backward buttons -->
-                        <div>
-                            <button data-hotel-id="${hotel.hotelid}" data-action="forward" class="moveBtn">-10s</button>
-                            <button data-hotel-id="${hotel.hotelid}" data-action="backward" class="moveBtn">+10s</button>
-                        </div>
+                        
                         
                         <h5 class="card-title" th:text="${hotel.hotelname}"></h5>
                         <p class="card-text">
                             <strong>Date:</strong> <span th:text="${hotel.hoteldate}"></span><br>
-                            <strong>Location:</strong> <span th:text="${hotel.hotellocation}"></span><br>
                             <strong>About:</strong> <span th:text="${hotel.about}"></span>
                         </p>
                         <a th:href="@{/rate/{hotelid}(hotelid=${hotel.hotelid})}" class="btn btn-primary">Rate</a>
@@ -99,6 +102,7 @@
                 video.currentTime -= 10; // Move 10 seconds backward
             }
         }
+        /*]]>*/
     </script>
 </body>
 </html>

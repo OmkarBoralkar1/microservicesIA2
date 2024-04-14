@@ -23,6 +23,7 @@ public interface Hotelservice {
  void saveHotelVideo(MultipartFile file, Hotel hotel) throws IOException;
  void delete(String hotelid);
  
- 
+ // Hotelservice.java
+List<Hotel> searchHotels(String query);
 
 }

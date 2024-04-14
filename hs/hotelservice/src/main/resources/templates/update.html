@@ -1,28 +1,93 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<html>
 <head>
     <title>Update Hotel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="date"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        a {
+            display: block;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
     <h1>Update Hotel</h1>
     <form th:action="@{/update/{hotelid}(hotelid=${hotel.hotelid})}" method="post">
         <input type="hidden" name="hotelid" th:value="${hotel.hotelid}" />
+        
         <label for="hotelimg">Hotel Image:</label>
         <video width="320" height="240" controls>
             <source th:src="@{/videos/{filename}(filename=${hotel.hotelVideoPath})}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-        <label for="name">Date:</label>
+        
+        <label for="hoteldate">Date:</label>
         <input type="date" id="hoteldate" name="hoteldate" th:value="${hotel.hoteldate}" required><br>
-        <label for="name">Name:</label>
+        
+        <label for="hotelname">Name:</label>
         <input type="text" id="hotelname" name="hotelname" th:value="${hotel.hotelname}" required><br>
-        <label for="location">Location:</label>
+        
+        <label for="hotellocation">Location:</label>
         <input type="text" id="hotellocation" name="hotellocation" th:value="${hotel.hotellocation}" required><br>
+        
         <label for="about">About:</label>
         <input type="text" id="about" name="about" th:value="${hotel.about}" required><br>
+        
         <input type="submit" value="Update">
     </form>
+    
     <a href="/">Back to Hotel List</a>
 </body>
 </html>
