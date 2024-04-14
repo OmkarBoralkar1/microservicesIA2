@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>ADD Rating</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>ADD Rating</h1>
+        <form th:action="@{/add}" method="post">
+            <div class="form-group">
+                <label for="Userid">User ID:</label>
+                <input type="text" name='Userid' id='Userid' th:value="${userId}" readonly/>
+            </div>
+            <div class="form-group">
+                <label for="Userid">User name:</label>
+                <input type="text" name='username' id='username' th:value="${username}" readonly/>
+            </div>
+            <div class="form-group">
+                <label for="Userid">Hotel ID:</label>
+                <input type="text" name='hotelid' id='hotelid' th:value="${hotelid}" readonly/>
+            </div>
+            <div class="form-group">
+                <label for="hotelname">feedback:</label>
+                <input type="text" th:field="*{rating.feedback}" placeholder="feedback" required>
+            </div>
+           
+            <div class="form-group">
+                <label for="rating">Rating:</label>
+                
+            
+                <select id="rating" th:field="*{rating.rating}" placeholder="rating" required>
+                    <option value="">Select a rating</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+           
+          
+           
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+    </div>
+</body>
+</html>

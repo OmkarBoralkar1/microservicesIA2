@@ -2,27 +2,30 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Ratings for Hotel</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <h1>Ratings for Hotel</h1>
-    <p>Welcome, <span th:text="${userId}"></span>!</p>
-    <p>Welcome, <span th:text="${username}"></span> Rate this video !</p>
-    <p>Hotelid, <span th:text="${hotelid}"></span>!</p>
-    <table>
-        <thead>
-            <tr>
-                <th>User ID</th>
-                <th>Score</th>
-                <th>feedback</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="rating : ${ratings}">
-                <td th:text="${rating.userId}"></td>
-                <td th:text="${rating.rating}"></td>
-                <td th:text="${rating.feedback}"></td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="container">
+        <h1>Ratings for Hotel</h1>
+        <p>Welcome, <span th:text="${userId}"></span>!</p>
+        <p>Welcome, <span th:text="${username}"></span> Rate this video !</p>
+        <p>Hotelid, <span th:text="${hotelid}"></span>!</p>
+        <a th:href="@{${backhotelserviceUrl} + '?userId=' + ${userId} + '&username=' + ${username}}">Back to Videos</a>
+        <a th:href="@{/addrating(hotelId=${hotelid},userId=${userId},username=${username})}" class="btn btn-primary">Add Rating</a>
+
+        <div class="row">
+            <div th:each="rating : ${ratings}" class="col-12">
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title" th:text="${rating.username}"></h5>
+                            <span class="badge badge-primary" th:text="${rating.rating}"></span>
+                        </div>
+                        <p class="card-text" th:text="${rating.feedback}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

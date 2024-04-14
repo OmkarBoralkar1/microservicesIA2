@@ -132,6 +132,7 @@ public class HotelserviceApplication {
 		return "home"; // This should match the name of your HTML template file without the .html
 						// extension
 	}
+	
 
 	@GetMapping("/videos/{filename:.+}")
 	public ResponseEntity<StreamingResponseBody> serveVideo(@PathVariable String filename) throws IOException {

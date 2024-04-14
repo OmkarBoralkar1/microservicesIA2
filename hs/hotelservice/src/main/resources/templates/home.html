@@ -1,49 +1,104 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<html>
 <head>
-    <title>Hotel List</title>
+    <title>Video List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <p>Welcome, <span th:text="${username}"></span>!</p>
-    <a th:href="${userserviceUrl}">Login</a>
-    <a th:href="${userserviceprofileurl}">profile</a>
-    <a href="/myvideos">MY Videos</a>
-    <h1>Hotel List</h1>
-    <table>
-        <thead>
-            <tr>
-                
-                <th>Hotel Video</th>
-                <th>Hotel date</th>
-                <th>Name</th>
-                <th>Location</th>
-                <th>About</th>
-               
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Iterate over the list of hotels -->
-            <tr th:each="hotel : ${hotels}">
-                <td>
-                    <video width="320" height="240" controls>
-                        <source th:src="@{/videos/{filename}(filename=${hotel.hotelVideoPath})}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    
-                </td>
-                <td th:text="${hotel.hoteldate}"></td>
-                <td th:text="${hotel.hotelname}"></td>
-                <td th:text="${hotel.hotellocation}"></td>
-                <td th:text="${hotel.about}"></td>
-                <td>
-                    <a th:href="@{/rate/{hotelid}(hotelid=${hotel.hotelid})}">Rate</a>
-                    
-                </td>
-                
-            </tr>
-        </tbody>
-    </table>
-    <a href="/create">Add New Hotel</a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Hotel List</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="${userserviceUrl}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="${userserviceprofileurl}">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/create">Add New Video</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/myvideos">MY Videos</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1>Welcome, <span th:text="${username}"></span>!</h1>
+        <div class="row">
+            <div th:each="hotel : ${hotels}" class="col-md-3">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <video class="hotelVideo" width="100%" height="240" controls th:id="'hotelVideo_' + ${hotel.hotelid}">
+                            <source th:src="@{/videos/{filename}(filename=${hotel.hotelVideoPath})}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        
+                        <!-- Resolution selector -->
+                        <div>
+                            <label for="resolution" th:attr="for='resolution_' + ${hotel.hotelid}">Select Resolution:</label>
+                            <select th:id="'resolution_' + ${hotel.hotelid}">
+                                <option value="360">360p</option>
+                                <option value="720">720p</option>
+                                <option value="1080">1080p</option>
+                                <!-- Add more options as needed -->
+                            </select>
+                            <button data-hotel-id="${hotel.hotelid}" class="changeResolution">Apply</button>
+                        </div>
+                        
+                        <!-- Forward and backward buttons -->
+                        <div>
+                            <button data-hotel-id="${hotel.hotelid}" data-action="forward" class="moveBtn">-10s</button>
+                            <button data-hotel-id="${hotel.hotelid}" data-action="backward" class="moveBtn">+10s</button>
+                        </div>
+                        
+                        <h5 class="card-title" th:text="${hotel.hotelname}"></h5>
+                        <p class="card-text">
+                            <strong>Date:</strong> <span th:text="${hotel.hoteldate}"></span><br>
+                            <strong>Location:</strong> <span th:text="${hotel.hotellocation}"></span><br>
+                            <strong>About:</strong> <span th:text="${hotel.about}"></span>
+                        </p>
+                        <a th:href="@{/rate/{hotelid}(hotelid=${hotel.hotelid})}" class="btn btn-primary">Rate</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        function changeResolution(event) {
+            var hotelId = event.target.getAttribute('data-hotel-id');
+            var video = document.getElementById('hotelVideo_' + hotelId);
+            var resolution = document.getElementById('resolution_' + hotelId).value;
+        
+            // Find the source element within the video element
+            var source = video.querySelector("source");
+        
+            // Modify the source URL to include selected resolution
+            var currentSrc = source.getAttribute("src");
+            var newSrc = currentSrc.replace(/(\d+)p/, resolution + "p");
+            
+            // Change the source URL
+            source.setAttribute("src", newSrc);
+        
+            // Reload the video
+            video.load();
+        }
+        
+        function moveVideo(event) {
+            var hotelId = event.target.getAttribute('data-hotel-id');
+            var action = event.target.getAttribute('data-action');
+            var video = document.getElementById('hotelVideo_' + hotelId);
+        
+            if (action === 'forward') {
+                video.currentTime += 10; // Move 10 seconds forward
+            } else if (action === 'backward') {
+                video.currentTime -= 10; // Move 10 seconds backward
+            }
+        }
+    </script>
 </body>
 </html>
