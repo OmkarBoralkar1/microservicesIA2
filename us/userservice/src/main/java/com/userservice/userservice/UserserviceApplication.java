@@ -2,7 +2,7 @@ package com.userservice.userservice;
 
 import com.userservice.userservice.services.*;
 
-import jakarta.servlet.http.HttpSession;
+
 
 // import com.userservice.userservice.services.externalservice.useerHotelservice;
 import com.userservice.userservice.entities.User;
@@ -78,7 +78,7 @@ public class UserserviceApplication {
     @PostMapping("/create")
     public String createUser(@ModelAttribute User user) {
         userService.saveUser(user);
-        return "redirect:/list";
+        return "redirect:/login";
     }
 
     // Method to show the update user form
