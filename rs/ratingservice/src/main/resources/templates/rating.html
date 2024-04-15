@@ -6,10 +6,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>Ratings for Hotel</h1>
+        <h1>Ratings for video</h1>
         <p>Welcome, <span th:text="${userId}"></span>!</p>
         <p>Welcome, <span th:text="${username}"></span> Rate this video !</p>
-        <p>Hotelid, <span th:text="${hotelid}"></span>!</p>
+        <p>video id, <span th:text="${hotelid}"></span>!</p>
         <a th:href="@{${backhotelserviceUrl} + '?userId=' + ${userId} + '&username=' + ${username}}">Back to Videos</a>
         <a th:href="@{/addrating(hotelId=${hotelid},userId=${userId},username=${username})}" class="btn btn-primary">Add Rating</a>
 

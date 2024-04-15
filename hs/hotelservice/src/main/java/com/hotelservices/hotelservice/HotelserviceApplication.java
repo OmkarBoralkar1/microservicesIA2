@@ -132,7 +132,6 @@ public class HotelserviceApplication {
 		return "home"; // This should match the name of your HTML template file without the .html
 						// extension
 	}
-	
 
 	@GetMapping("/videos/{filename:.+}")
 	public ResponseEntity<StreamingResponseBody> serveVideo(@PathVariable String filename) throws IOException {
@@ -177,10 +176,17 @@ public class HotelserviceApplication {
 		try {
 			// Assuming you have a method to handle the video upload and update the hotel
 			// entity
-			hotelService.saveHotelVideo(hotel.getHotelvideo(), hotel);
+			
 
-			// Save the hotel entity
-			hotelService.create(hotel);
+			// Check if the userid is not null before proceeding with hotel creation
+			if (hotel.getUserid() != null) {
+				hotelService.saveHotelVideo(hotel.getHotelvideo(), hotel);
+				// Save the hotel entity
+				hotelService.create(hotel);
+			} else {
+				// Log or handle the case where userid is null (optional)
+				System.out.println("Userid is null. Hotel creation aborted.");
+			}
 
 			// Redirect to the home page or any other appropriate page after successful
 			// creation
@@ -255,36 +261,38 @@ public class HotelserviceApplication {
 	}
 
 	@GetMapping("/rate/{hotelid}")
-    public ResponseEntity<RedirectView> rateHotel(@PathVariable String hotelid, Model model) {
-        String userId = (String) model.getAttribute("userId");
-        String username = (String) model.getAttribute("username");
+	public ResponseEntity<RedirectView> rateHotel(@PathVariable String hotelid, Model model) {
+		String userId = (String) model.getAttribute("userId");
+		String username = (String) model.getAttribute("username");
 
-        // Find the RatingService instance from Eureka
-        List<ServiceInstance> instances = discoveryClient.getInstances("RATINGSERVICE");
-        if (!instances.isEmpty()) {
-            ServiceInstance instance = instances.get(0);
-            String ratingservice = instance.getUri().toString();
-            String ratingServiceUrl = ratingservice + "/rate?userId=" + userId + "&hotelId=" + hotelid + "&username=" + username;
+		// Find the RatingService instance from Eureka
+		List<ServiceInstance> instances = discoveryClient.getInstances("RATINGSERVICE");
+		if (!instances.isEmpty()) {
+			ServiceInstance instance = instances.get(0);
+			String ratingservice = instance.getUri().toString();
+			String ratingServiceUrl = ratingservice + "/rate?userId=" + userId + "&hotelId=" + hotelid + "&username="
+					+ username;
 
-            // Create a RedirectView instance
-            RedirectView redirectView = new RedirectView(ratingServiceUrl);
-            redirectView.setStatusCode(HttpStatus.FOUND); // Use HttpStatus.FOUND for a temporary redirect
+			// Create a RedirectView instance
+			RedirectView redirectView = new RedirectView(ratingServiceUrl);
+			redirectView.setStatusCode(HttpStatus.FOUND); // Use HttpStatus.FOUND for a temporary redirect
 
-            // Return the RedirectView wrapped in a ResponseEntity
+			// Return the RedirectView wrapped in a ResponseEntity
 			return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(ratingServiceUrl)).build();
-        } else {
-            // Handle the case where the RatingService is not found
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
+		} else {
+			// Handle the case where the RatingService is not found
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
 
 	@GetMapping("/search")
-    public String searchHotels(@RequestParam("query") String query, Model model) {
-        System.out.println("search router hit");
-        List<Hotel> hotels = hotelService.searchHotels(query); // Use correct service method
-        System.out.println("search results got: " + hotels);
-        model.addAttribute("hotels", hotels);
-        return "home"; // This should match the name of your HTML template file without the .html extension
-    }
+	public String searchHotels(@RequestParam("query") String query, Model model) {
+		System.out.println("search router hit");
+		List<Hotel> hotels = hotelService.searchHotels(query); // Use correct service method
+		System.out.println("search results got: " + hotels);
+		model.addAttribute("hotels", hotels);
+		return "home"; // This should match the name of your HTML template file without the .html
+						// extension
+	}
 
 }

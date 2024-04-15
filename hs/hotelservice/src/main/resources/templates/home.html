@@ -6,7 +6,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Hotel List</a>
+       
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -61,6 +61,7 @@
                         <h5 class="card-title" th:text="${hotel.hotelname}"></h5>
                         <p class="card-text">
                             <strong>Date:</strong> <span th:text="${hotel.hoteldate}"></span><br>
+                            <strong>Location:</strong> <span th:text="${hotel.hotellocation}"></span><br>
                             <strong>About:</strong> <span th:text="${hotel.about}"></span>
                         </p>
                         <a th:href="@{/rate/{hotelid}(hotelid=${hotel.hotelid})}" class="btn btn-primary">Rate</a>
